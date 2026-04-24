@@ -1,10 +1,11 @@
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class ParkingUI {
 
-    // ── colori ───────────────────────────────────────────────
     private static final Color BG          = new Color(245, 245, 240);
     private static final Color CARD_BG     = Color.WHITE;
     private static final Color FREE_BG     = new Color(234, 243, 222);
@@ -16,8 +17,8 @@ public class ParkingUI {
     private static final Color TEXT_MUTED  = new Color(110, 110, 100);
     private static final Color MSG_OK_FG   = new Color(39,  80,  10);
     private static final Color MSG_ERR_FG  = new Color(121, 31,  31);
+    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("HH:mm");
 
-    // ── stato ────────────────────────────────────────────────
     private final Parking     parking = new Parking();
     private JPanel[]          spotPanels;
     private JLabel            lblOcc, lblFree, lblFull;
@@ -25,12 +26,12 @@ public class ParkingUI {
     private JTextField        txtPlate;
     private JLabel            lblMsg;
     private Timer             msgTimer;
+    private JPanel            historyPanel;
 
-    // ── entry point chiamato da Main ─────────────────────────
     public void show() {
         JFrame frame = new JFrame("Gestione Parcheggio");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(680, 620);
+        frame.setSize(680, 720);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
 
@@ -39,15 +40,21 @@ public class ParkingUI {
         root.setBorder(new EmptyBorder(20, 24, 20, 24));
 
         root.add(buildHeader(),  BorderLayout.NORTH);
-        root.add(buildCenter(), BorderLayout.CENTER);
-        root.add(buildForm(),   BorderLayout.SOUTH);
+
+        JPanel center = new JPanel(new BorderLayout(0, 0));
+        center.setOpaque(false);
+        center.add(buildCenter(),  BorderLayout.NORTH);
+        center.add(buildHistory(), BorderLayout.CENTER);
+        root.add(center, BorderLayout.CENTER);
+
+        root.add(buildForm(), BorderLayout.SOUTH);
 
         frame.setContentPane(root);
         frame.setVisible(true);
         refreshAll();
     }
 
-    // ── HEADER con contatori ─────────────────────────────────
+    // ── HEADER ───────────────────────────────────────────────
     private JPanel buildHeader() {
         JPanel p = new JPanel(new BorderLayout());
         p.setOpaque(false);
@@ -94,11 +101,11 @@ public class ParkingUI {
         return p;
     }
 
-    // ── GRIGLIA 2×5 dei posti ────────────────────────────────
+    // ── GRIGLIA POSTI ─────────────────────────────────────────
     private JPanel buildCenter() {
         JPanel outer = new JPanel(new BorderLayout());
         outer.setOpaque(false);
-        outer.setBorder(new EmptyBorder(0, 0, 16, 0));
+        outer.setBorder(new EmptyBorder(0, 0, 12, 0));
 
         JLabel sec = new JLabel("MAPPA PARCHEGGIO");
         sec.setFont(new Font("SansSerif", Font.BOLD, 11));
@@ -138,29 +145,23 @@ public class ParkingUI {
         if (car == null) {
             p.setBackground(FREE_BG);
             p.setBorder(new LineBorder(FREE_BORDER, 1, true));
-
             JLabel icon = new JLabel("P");
             icon.setFont(new Font("SansSerif", Font.BOLD, 22));
             icon.setForeground(new Color(150, 170, 130));
-
             JLabel freeLbl = new JLabel("Libero");
             freeLbl.setFont(new Font("SansSerif", Font.PLAIN, 10));
             freeLbl.setForeground(new Color(90, 120, 60));
-
             p.add(numLbl, c);
             p.add(icon,   c);
             p.add(freeLbl, c);
         } else {
             p.setBackground(OCC_BG);
             p.setBorder(new LineBorder(OCC_BORDER, 1, true));
-
             JLabel icon = new JLabel("🚗");
             icon.setFont(new Font("SansSerif", Font.PLAIN, 18));
-
             JLabel plate = new JLabel(car.getPlate());
             plate.setFont(new Font("Monospaced", Font.BOLD, 12));
             plate.setForeground(new Color(100, 20, 20));
-
             JButton btn = new JButton("Rimuovi");
             btn.setFont(new Font("SansSerif", Font.PLAIN, 10));
             btn.setForeground(OCC_BORDER);
@@ -170,7 +171,6 @@ public class ParkingUI {
             btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             final int i = idx;
             btn.addActionListener(e -> removeCar(i));
-
             p.add(numLbl, c);
             p.add(icon,   c);
             p.add(plate,  c);
@@ -181,7 +181,68 @@ public class ParkingUI {
         p.repaint();
     }
 
-    // ── FORM aggiunta veicolo ────────────────────────────────
+    // ── STORICO ───────────────────────────────────────────────
+    private JPanel buildHistory() {
+        JPanel outer = new JPanel(new BorderLayout());
+        outer.setOpaque(false);
+        outer.setBorder(new EmptyBorder(0, 0, 12, 0));
+
+        JLabel sec = new JLabel("STORICO USCITE");
+        sec.setFont(new Font("SansSerif", Font.BOLD, 11));
+        sec.setForeground(TEXT_MUTED);
+        sec.setBorder(new EmptyBorder(0, 0, 6, 0));
+        outer.add(sec, BorderLayout.NORTH);
+
+        historyPanel = new JPanel();
+        historyPanel.setLayout(new BoxLayout(historyPanel, BoxLayout.Y_AXIS));
+        historyPanel.setBackground(CARD_BG);
+        historyPanel.setBorder(new EmptyBorder(6, 8, 6, 8));
+
+        JLabel empty = new JLabel("Nessuna uscita registrata.");
+        empty.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        empty.setForeground(TEXT_MUTED);
+        empty.setName("empty");
+        historyPanel.add(empty);
+
+        JScrollPane scroll = new JScrollPane(historyPanel);
+        scroll.setPreferredSize(new Dimension(0, 90));
+        scroll.setBorder(new LineBorder(new Color(200, 200, 190), 1, true));
+        scroll.getVerticalScrollBar().setUnitIncrement(8);
+        outer.add(scroll, BorderLayout.CENTER);
+        return outer;
+    }
+
+    private void refreshHistory() {
+        historyPanel.removeAll();
+        List<Stopover> hist = parking.getHistory();
+        if (hist.isEmpty()) {
+            JLabel empty = new JLabel("Nessuna uscita registrata.");
+            empty.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            empty.setForeground(TEXT_MUTED);
+            historyPanel.add(empty);
+        } else {
+            // mostra dal più recente
+            for (int i = hist.size() - 1; i >= 0; i--) {
+                Stopover s = hist.get(i);
+                String entrata = s.getDatetimeIn()  != null ? s.getDatetimeIn().format(FMT)  : "--";
+                String uscita  = s.getDatetimeOut() != null ? s.getDatetimeOut().format(FMT) : "--";
+                String line = String.format(
+                    "Posto %d  |  %s  |  entrata %s  uscita %s  |  € %.2f",
+                    s.getPosition(), s.getCar().getPlate(), entrata, uscita, s.getPrice()
+                );
+                JLabel lbl = new JLabel(line);
+                lbl.setFont(new Font("Monospaced", Font.PLAIN, 11));
+                lbl.setForeground(TEXT_DARK);
+                lbl.setBorder(new EmptyBorder(3, 0, 3, 0));
+                historyPanel.add(lbl);
+                if (i > 0) historyPanel.add(new JSeparator());
+            }
+        }
+        historyPanel.revalidate();
+        historyPanel.repaint();
+    }
+
+    // ── FORM ──────────────────────────────────────────────────
     private JPanel buildForm() {
         JPanel outer = new JPanel(new BorderLayout());
         outer.setOpaque(false);
@@ -241,7 +302,7 @@ public class ParkingUI {
         return outer;
     }
 
-    // ── LOGICA ───────────────────────────────────────────────
+    // ── LOGICA ────────────────────────────────────────────────
     private void addCar() {
         String plate = txtPlate.getText().trim().toUpperCase();
         if (plate.isEmpty()) { showMsg("Inserisci una targa valida.", false); return; }
@@ -253,9 +314,9 @@ public class ParkingUI {
         int place = Integer.parseInt(sel.toString().replace("Posto ", ""));
 
         Car car = new Car(plate);
-        if (parking.contains(car))         { showMsg("La targa " + plate + " è già presente.", false); return; }
-        if (parking.getCarAt(place) != null) { showMsg("Posto già occupato.", false); return; }
-        if (parking.isFull())               { showMsg("Parcheggio pieno!", false); return; }
+        if (parking.contains(car))            { showMsg("La targa " + plate + " è già presente.", false); return; }
+        if (parking.getCarAt(place) != null)  { showMsg("Posto già occupato.", false); return; }
+        if (parking.isFull())                 { showMsg("Parcheggio pieno!", false); return; }
 
         parking.addCar(car, place);
         txtPlate.setText("");
@@ -266,8 +327,9 @@ public class ParkingUI {
     private void removeCar(int place) {
         Car car = parking.getCarAt(place);
         String plate = (car != null) ? car.getPlate() : "?";
-        parking.removeCar(place);
-        showMsg("Veicolo " + plate + " rimosso dal posto " + place + ".", true);
+        // FIX: removeCar ora restituisce double → mostriamo il prezzo
+        double price = parking.removeCar(place);
+        showMsg(String.format("Veicolo %s uscito dal posto %d — € %.2f", plate, place, price), true);
         refreshAll();
     }
 
@@ -283,13 +345,14 @@ public class ParkingUI {
         for (int i = 0; i < parking.getSize(); i++) {
             if (parking.getCarAt(i) == null) cmbPlace.addItem("Posto " + i);
         }
+        refreshHistory();
     }
 
     private void showMsg(String text, boolean ok) {
         lblMsg.setText(text);
         lblMsg.setForeground(ok ? MSG_OK_FG : MSG_ERR_FG);
         if (msgTimer != null && msgTimer.isRunning()) msgTimer.stop();
-        msgTimer = new Timer(3500, e -> lblMsg.setText(" "));
+        msgTimer = new Timer(4000, e -> lblMsg.setText(" "));
         msgTimer.setRepeats(false);
         msgTimer.start();
     }
