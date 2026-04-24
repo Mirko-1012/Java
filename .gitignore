@@ -1,0 +1,10 @@
+# Ignora tutti i file compilati
+*.class
+
+# Ignora le cartelle di output dei vari IDE/Build tools
+bin/
+out/
+target/
+
+# (Opzionale) Ignora le impostazioni locali di VS Code
+.vscode/
