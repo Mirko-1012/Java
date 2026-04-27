@@ -1,9 +1,7 @@
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.*;
 
 public class ParkingUI extends JFrame {
 
@@ -84,8 +82,8 @@ public class ParkingUI extends JFrame {
         // Right: stat cards
         JPanel stats = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 0));
         stats.setBackground(BG_DARK);
-        stats.add(buildStatCard("POSTI LIBERI", "–", true));
-        stats.add(buildStatCard("INCASSO €", "–", false));
+        stats.add(buildStatCard("POSTI LIBERI", "-", true));
+        stats.add(buildStatCard("INCASSO €", "-", false));
 
         // we keep refs to labels inside stat cards via field refs set in buildStatCard
         p.add(left, BorderLayout.WEST);
