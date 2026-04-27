@@ -29,7 +29,7 @@ public class Stopover {
 
     public double getPrice() {
         if (this.isOver()) {
-            return (this.end - this.start) * this.priceForMillis;
+            return ((double)(this.end - this.start) * this.priceForMillis) / 10000.0;
         } else {
             return 0;
         }
@@ -46,4 +46,3 @@ public class Stopover {
         return position;
     }
 }
-
