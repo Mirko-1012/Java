@@ -12,13 +12,13 @@ public class Parking {
         this.places = places;
     }
 
-    public boolean addCar(Car car, int position) {
+    public boolean addVehicle(Vehicle vehicle, int position) {
         for (Stopover stopover : this.Stopovers) {
             if (stopover.isCarIntoTheParking() && stopover.getPosition() == position) {
                 return false;
             }
         }
-        this.Stopovers.add(new Stopover(car, position, this.priceForMillis));
+        this.Stopovers.add(new Stopover(vehicle, position, this.priceForMillis));
         return true;
     }
 
@@ -40,9 +40,9 @@ public class Parking {
         return amount;
     }
 
-    public void exitCarFromParking(String plate) {
+    public void exitVehicle(String plate) {
         for (Stopover stopover : this.Stopovers) {
-            if (stopover.getCar().getPlate().equals(plate) && stopover.isCarIntoTheParking()) {
+            if (stopover.getVehicle().getPlate().equals(plate) && stopover.isCarIntoTheParking()) {
                 stopover.exit();
                 return;
             }

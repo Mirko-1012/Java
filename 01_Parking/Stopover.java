@@ -4,19 +4,23 @@ public class Stopover {
 
     private long start;
     private long end;
-    private Car car;
+    private Vehicle vehicle;
     private int position;
     private int priceForMillis = 0;
 
-    public Stopover(Car car, int position, int priceForMillis){
+    public Stopover(Vehicle vehicle, int position, int basePrice) {
         this.start = (new Date()).getTime();
-        this.car = car;
+        this.vehicle = vehicle;
         this.position = position;
-        this.priceForMillis = priceForMillis;
+        this.priceForMillis = basePrice * vehicle.getPriceMultiplier();
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
     }
 
     public void exit() {
-        this.end = (new Date()).getTime();
+        this.end = System.currentTimeMillis();
     }
 
     public boolean isOver() {
@@ -24,7 +28,7 @@ public class Stopover {
     }
 
     public boolean isCarIntoTheParking() {
-        return !this.isOver();
+        return this.end == 0;
     }
 
     public double getPrice() {
@@ -39,9 +43,6 @@ public class Stopover {
         return start;
     }
 
-    public Car getCar() {
-        return car;
-    }
     public int getPosition() {
         return position;
     }

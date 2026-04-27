@@ -1,10 +1,10 @@
-public class Car extends Vehicle {
-    public Car(String plate) {
+public class Truck extends Vehicle {
+    public Truck(String plate) {
         super(plate);
     }
 
     @Override
     public int getPriceMultiplier() {
-        return 1;
+        return 3;
     }
 }
