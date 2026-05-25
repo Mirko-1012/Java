@@ -1,4 +1,4 @@
-public class Formula1 extends Thread {
+public class Formula1 extends Object implements Runnable {
     private String autoName;
     private int lap;
 
@@ -6,6 +6,7 @@ public class Formula1 extends Thread {
         this.autoName = autoName;
         this.lap = lap;
     }
+    
     @Override
     public void run() {
         System.out.println(autoName + " has started and has to do " + lap + " laps");
