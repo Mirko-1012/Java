@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class SmartHome {
-    private ArrayList<RemoteControl> remoteControlList = new ArrayList();
+    private ArrayList<RemoteControl> remoteControlList = new ArrayList<>();
 
     public void add(RemoteControl rc) {
         this.remoteControlList.add(rc);
