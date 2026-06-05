@@ -1,4 +1,4 @@
-/*import java.util.ArrayList;
+import java.util.ArrayList;
 
 public class SmartHome {
     private ArrayList<RemoteControl> remoteControlList = new ArrayList();
@@ -19,4 +19,3 @@ public class SmartHome {
         }
     }
 }
-*/
