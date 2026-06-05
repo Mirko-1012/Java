@@ -1,5 +1,9 @@
+import javax.swing.SwingUtilities;
+
 public class Main {
     public static void main(String[] args) {
-        new ParkingUI();
+        try { javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getCrossPlatformLookAndFeelClassName()); }
+        catch (Exception ignored) {}
+        SwingUtilities.invokeLater(ParkingUI::new);
     }
 }

@@ -49,14 +49,19 @@ public class Parking {
         return amount;
     }
 
-    public void exitVehicle(String plate) {
+    public boolean exitVehicle(String plate) {
         for (Stopover stopover : this.Stopovers) {
             if (stopover.getVehicle().getPlate().equals(plate) && stopover.isCarIntoTheParking()) {
                 stopover.exit();
                 salvaVeicoliSuFile();
-                return;
+                return true;
             }
         }
+        return false;
+    }
+
+    public ArrayList<Stopover> getStopovers() {
+        return Stopovers;
     }
 
     private void caricaVeicoliDaFile() {
@@ -66,10 +71,10 @@ public class Parking {
 
             String riga;
             while ((riga = br.readLine()) != null) {
-                String[] parti = riga.split(",");   // divide "AB123CD,Auto,3" in un array
-                String plate   = parti[0];
-                String tipo    = parti[1];
-                int position   = Integer.parseInt(parti[2]);
+                String[] parti = riga.split(",");
+                String plate = parti[0];
+                String tipo = parti[1];
+                int position = Integer.parseInt(parti[2]);
 
                 Vehicle v = tipo.equals("Camion") ? new Truck(plate) : new Car(plate);
                 this.Stopovers.add(new Stopover(v, position, this.priceForMillis));
@@ -79,8 +84,6 @@ public class Parking {
             fr.close();
 
         } catch (IOException e) {
-            // Se il file non esiste ancora (primo avvio), non è un errore grave
-            System.out.println("Nessun file trovato, parcheggio vuoto.");
         }
     }
 
@@ -99,27 +102,7 @@ public class Parking {
             fw.close();
 
         } catch (IOException e) {
-            System.out.println("Errore durante il salvataggio del file: " + e.getMessage());
         }
     }
 
-    public void stampaContenutoFile() {
-        try {
-            FileReader fr = new FileReader(FILE_NAME);
-            BufferedReader br = new BufferedReader(fr);
-
-            System.out.println("=== Contenuto di " + FILE_NAME + " ===");
-            String riga;
-            while ((riga = br.readLine()) != null) {
-                System.out.println(riga);
-            }
-            System.out.println("=====================================");
-
-            br.close();
-            fr.close();
-
-        } catch (IOException e) {
-            System.out.println("Errore durante la lettura del file: " + e.getMessage());
-        }
-    }
 }

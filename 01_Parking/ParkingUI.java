@@ -276,7 +276,8 @@ public class ParkingUI extends JFrame {
         btn.addActionListener(e -> {
             String plate = tfExitPlate.getText().trim().toUpperCase();
             if (plate.isEmpty()) { showMsg("Inserisci la targa."); return; }
-            parking.exitVehicle(plate);
+            boolean ok = parking.exitVehicle(plate);
+            if (!ok) { showMsg("Nessun veicolo in sosta con targa " + plate + "."); return; }
             tfExitPlate.setText("");
             refresh();
         });
@@ -286,7 +287,7 @@ public class ParkingUI extends JFrame {
     // ── Helpers ───────────────────────────────────────────────────────────────
     private void refresh() {
         tableModel.setRowCount(0);
-        for (Stopover s : parking.Stopovers) {
+        for (Stopover s : parking.getStopovers()) {
             String stato = s.isCarIntoTheParking() ? "In sosta" : "Uscita";
             String tipo  = (s.getVehicle() instanceof Truck) ? "Camion" : "Auto";
             java.util.Date d = new java.util.Date(s.getStartTime());
@@ -425,12 +426,5 @@ public class ParkingUI extends JFrame {
             g.dispose();
             super.paintComponent(g0);
         }
-    }
-
-    // ══════════════════════════════════════════════════════════════════════════
-    public static void main(String[] args) {
-        try { UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); }
-        catch (Exception ignored) {}
-        SwingUtilities.invokeLater(ParkingUI::new);
     }
 }
