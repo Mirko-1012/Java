@@ -161,7 +161,7 @@ public class Configuration {
 
 
 
-    public void checkCompatibility() throws IncompatibleComponentException {
+    public void checkCompatibility() throws IncompatibleComponentException { // throws serve a indicare che questo metodo può lanciare un'eccezione di tipo IncompatibleComponentException.
 
         if (cpu != null && motherboard != null) { // Se entrambi sono presenti, controlliamo la compatibilità
             if (!cpu.getSocket().equals(motherboard.getSocket())) { // ! perché vogliamo l'errore se i socket sono diversi
