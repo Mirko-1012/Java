@@ -3,7 +3,7 @@ public class Storage extends Component {
     private int capacityGB;
     private String storageType;
 
-    public Storage(String name, String storageType, int capacityGB, double price) {
+    public Storage(String name, String storageType, int capacityGB, float price) {
         super(name, price);
         this.storageType = storageType;
         this.capacityGB = capacityGB;
@@ -13,10 +13,6 @@ public class Storage extends Component {
         return storageType;
     }
 
-    public int getCapacityGB() {
-        return capacityGB;
-    }
-
     @Override
     public String getType() {
         return "Storage";
@@ -24,7 +20,11 @@ public class Storage extends Component {
 
     @Override
     public int getPowerConsumption() {
-        return storageType.equals("HDD") ? 10 : 5;
+        if (storageType.equals("HDD")) {
+            return 10; // 10 watt per HDD
+        } else {
+            return 5; // 5 watt per SSD
+        }
     }
 
     @Override

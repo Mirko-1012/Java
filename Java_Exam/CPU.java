@@ -3,7 +3,7 @@ public class CPU extends Component {
     private String socket;
     private int tdp;
 
-    public CPU(String name, String socket, int tdp, double price) {
+    public CPU(String name, String socket, int tdp, float price) {
         super(name, price);
         this.socket = socket;
         this.tdp = tdp;

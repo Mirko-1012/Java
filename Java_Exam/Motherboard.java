@@ -4,7 +4,7 @@ public class Motherboard extends Component {
     private String ddrType;
     private String formFactor;
 
-    public Motherboard(String name, String socket, String ddrType, String formFactor, double price) {
+    public Motherboard(String name, String socket, String ddrType, String formFactor, float price) {
         super(name, price);
         this.socket = socket;
         this.ddrType = ddrType;

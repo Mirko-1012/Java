@@ -3,7 +3,7 @@ public class RAM extends Component {
     private String ddrType;
     private int capacityGB;
 
-    public RAM(String name, String ddrType, int capacityGB, double price) {
+    public RAM(String name, String ddrType, int capacityGB, float price) {
         super(name, price);
         this.ddrType = ddrType;
         this.capacityGB = capacityGB;
@@ -11,10 +11,6 @@ public class RAM extends Component {
 
     public String getDdrType() {
         return ddrType;
-    }
-
-    public int getCapacityGB() {
-        return capacityGB;
     }
 
     @Override

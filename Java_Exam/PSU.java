@@ -2,7 +2,7 @@ public class PSU extends Component {
 
     private int wattage;
 
-    public PSU(String name, int wattage, double price) {
+    public PSU(String name, int wattage, float price) {
         super(name, price);
         this.wattage = wattage;
     }

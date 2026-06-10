@@ -1,9 +1,9 @@
 public abstract class Component {
 
     private String name;
-    private double price;
+    private float price;
 
-    public Component(String name, double price) {
+    public Component(String name, float price) {
         this.name = name;
         this.price = price;
     }
@@ -12,7 +12,7 @@ public abstract class Component {
         return name;
     }
 
-    public double getPrice() {
+    public float getPrice() {
         return price;
     }
 

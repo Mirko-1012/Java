@@ -3,7 +3,7 @@ public class GPU extends Component {
     private int vramGB;
     private int tdp;
 
-    public GPU(String name, int vramGB, int tdp, double price) {
+    public GPU(String name, int vramGB, int tdp, float price) {
         super(name, price);
         this.vramGB = vramGB;
         this.tdp = tdp;
@@ -25,6 +25,6 @@ public class GPU extends Component {
 
     @Override
     public String toString() {
-        return getName() + " [" + vramGB + "GB VRAM] (€" + String.format("%.2f", getPrice()) + ")";
+        return getName() + " [" + vramGB + "GB] (€" + String.format("%.2f", getPrice()) + ")";
     }
 }

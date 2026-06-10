@@ -1,7 +1,8 @@
+// Thread in background che calcola il prezzo senza bloccare la GUI
 public class PriceCalculatorWorker extends Thread {
 
     private Configuration configuration;
-    private double risultatoPrezzo;
+    private float risultatoPrezzo;
     private int risultatoWatt;
 
     public PriceCalculatorWorker(Configuration configuration) {
@@ -11,7 +12,7 @@ public class PriceCalculatorWorker extends Thread {
     @Override
     public void run() {
         try {
-            Thread.sleep(300);
+            Thread.sleep(300); // Simuliamo un calcolo che richiede tempo giusto per usare i thread e mostrare il caricamento
         } catch (InterruptedException e) {
             System.out.println("Thread interrotto: " + e.getMessage());
         }
@@ -19,7 +20,7 @@ public class PriceCalculatorWorker extends Thread {
         this.risultatoWatt = configuration.getTotalPowerConsumption();
     }
 
-    public double getRisultatoPrezzo() {
+    public float getRisultatoPrezzo() {
         return risultatoPrezzo;
     }
 
