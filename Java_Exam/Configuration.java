@@ -22,7 +22,7 @@ public class Configuration {
 
 
 
-    public Configuration(String name) { // Il costruttore ora richiede solo il nome, gli altri componenti possono essere aggiunti dopo
+    public Configuration(String name) { // Il costruttore richiede solo il nome, gli altri componenti possono essere aggiunti dopo
         this.name = name;
         totalConfigurations++;
     }
